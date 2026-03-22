@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3002';
+const DASHBOARD_URL = process.env.REACT_APP_DASHBOARD_URL || 'http://localhost:3001';
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -8,7 +10,6 @@ function Login() {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -23,23 +24,20 @@ function Login() {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3002/api/auth/login', {
+            const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Important for session cookies
+                credentials: 'include',
                 body: JSON.stringify(formData)
             });
 
             const data = await response.json();
 
             if (data.success) {
-                // Store user info in localStorage
                 localStorage.setItem('user', JSON.stringify(data.user));
-                
-                // Redirect to dashboard
-               window.location.href = 'http://localhost:3001'; // Dashboard URL // Change this to your dashboard URL
+                window.location.href = DASHBOARD_URL; // ✅ uses env variable
             } else {
                 setError(data.message || 'Invalid credentials');
             }

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3002';
+
 function Signup() {
     const [formData, setFormData] = useState({
         email: '',
@@ -24,7 +26,7 @@ function Signup() {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3002/api/auth/signup', {
+            const response = await fetch(`${BACKEND_URL}/api/auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ function Signup() {
 
             if (data.success) {
                 alert('Signup successful! Please login.');
-                navigate('/login'); // Redirect to login page
+                navigate('/login');
             } else {
                 setError(data.message);
             }
