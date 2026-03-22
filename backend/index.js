@@ -18,15 +18,17 @@ const uri = process.env.MONGO_URL;
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Frontend and Dashboard
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://your-netlify-app.netlify.app'], // Frontend and Dashboard
     credentials: true
 }));
 app.use(bodyParser.json());
 
 // Session configuration
 app.use(session({
-    secret: 'your-secret-key-change-this', // Change this to a random string
+    secret: process.env.SESSION_SECRET, // Change this to a random string
     resave: false,
     saveUninitialized: false,
     cookie: { 
@@ -68,8 +70,20 @@ app.post('/newOrder', async (req, res) => {
     res.send("Order Saved!");
 });
 
-app.listen(PORT, () => {
-    console.log("App started on port " + PORT);
-    mongoose.connect(uri);
-    console.log("DB started");
-});
+// app.listen(PORT, () => {
+//     console.log("App started on port " + PORT);
+//     mongoose.connect(uri);
+//     console.log("DB started");
+// });
+mongoose.connect(uri)
+  .then(() => {
+    console.log("DB connected");
+
+    app.listen(PORT, () => {
+      console.log("App started on port " + PORT);
+    });
+
+  })
+  .catch((err) => {
+    console.log("DB connection error:", err);
+  });
