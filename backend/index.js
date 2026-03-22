@@ -21,7 +21,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://your-netlify-app.netlify.app'], // Frontend and Dashboard
+    origin: ['http://localhost:3000', 'http://localhost:3001', process.env.FRONTEND_URL, process.env.DASHBOARD_URL,], // Frontend and Dashboard
     credentials: true
 }));
 app.use(bodyParser.json());
