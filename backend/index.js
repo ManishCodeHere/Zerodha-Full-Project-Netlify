@@ -20,10 +20,25 @@ const app = express();
 
 app.set('trust proxy', 1);
 
+// ✅ FIXED CORS - allows both localhost and netlify urls
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    process.env.FRONTEND_URL,   // your frontend netlify url
+    process.env.DASHBOARD_URL,  // your dashboard netlify url
+];
+
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', process.env.FRONTEND_URL, process.env.DASHBOARD_URL,], // Frontend and Dashboard
+    origin: function(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
+
 app.use(bodyParser.json());
 
 // Session configuration
