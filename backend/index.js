@@ -15,6 +15,7 @@ const authRoutes = require('./routes/authRoutes');
 
 const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
+const LocalStrategy = require('passport-local').Strategy;
 
 const app = express();
 
@@ -56,7 +57,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Passport configuration
-passport.use(UserModel.createStrategy());
+// passport.use(UserModel.createStrategy());
+passport.use(new LocalStrategy(
+    { usernameField: 'email' },
+    UserModel.authenticate()
+));
+
 passport.serializeUser(UserModel.serializeUser());
 passport.deserializeUser(UserModel.deserializeUser());
 
